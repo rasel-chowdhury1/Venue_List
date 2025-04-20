@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { settingsController } from "./setting.controller";
+import auth from "../../middleware/auth";
 
 export const settingsRoutes = Router();
 
@@ -10,4 +11,4 @@ settingsRoutes
     .get("/termAndConditions", settingsController.getTermConditions)
     .get("/aboutUs", settingsController.getAboutUs)
     // Route to create or update the privacy policy
-    .put("/", settingsController.updateSettingsByKey);
+    .put("/", auth('admin'), settingsController.updateSettingsByKey);

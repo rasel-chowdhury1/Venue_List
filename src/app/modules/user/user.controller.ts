@@ -5,7 +5,8 @@ import { userService } from './user.service';
 
 import httpStatus from 'http-status';
 import { storeFile } from '../../utils/fileHelper';
-import { CLIENT_RENEG_LIMIT } from 'tls';
+import fs, { access } from 'fs';
+import { uploadFileToS3 } from '../../middleware/fileUploadS3';
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   console.log(req.body);
@@ -37,7 +38,25 @@ const userCreateVarification = catchAsync(async (req, res) => {
 
 const completedProfile = catchAsync(async (req: Request, res: Response) => {
   if (req?.file) {
-    req.body.profileImage = storeFile('profile', req?.file?.filename);
+    // req.body.profileImage = storeFile('profile', req?.file?.filename);
+
+    // upload file in bucket function is done
+    try {
+      const data = await uploadFileToS3(req.file)
+
+
+      console.log("data----->>>> ",data)
+      // deleting file after upload
+      fs.unlinkSync(req.file.path)
+  
+      req.body.profileImage = data.Location;
+    } catch (error) {
+      console.log("====erro9r --->>> ", error)
+      if(fs.existsSync(req.file.path)){
+        fs.unlinkSync(req.file.path)
+      }
+    }
+
   }
 
   const result = await userService.completedUser(req?.user?.userId, req.body);

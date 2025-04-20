@@ -97,7 +97,7 @@ const fileUpload = (uploadDirectory: string) => {
 
   const upload = multer({
     storage,
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB limit for files
+    limits: { fileSize: 5000 * 1024 * 1024 }, // 50 MB limit for files
     fileFilter: (req: Request, file, cb) => {
       // Check file type for video or document
       const allowedMimeTypes = [
@@ -127,5 +127,7 @@ const fileUpload = (uploadDirectory: string) => {
 
   return upload;
 };
+
+
 
 export default fileUpload;

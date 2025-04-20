@@ -4,6 +4,8 @@ import { authRoutes } from "../modules/auth/auth.route";
 import { otpRoutes } from "../modules/otp/otp.routes";
 import { settingsRoutes } from "../modules/setting/setting.route";
 import { notificationRoutes } from "../modules/notifications/notifications.route";
+import { categoryRoutes } from "../modules/category/category.route";
+import { subscriptionRoutes } from "../modules/subscription/subscription.route";
 
 const router = Router();
 
@@ -27,6 +29,14 @@ const moduleRoutes = [
   {
      path: "/notifications",
      route: notificationRoutes
+  },
+  {
+    path: "/category",
+    route: categoryRoutes
+  },
+  {
+    path: "/subscription",
+    route: subscriptionRoutes
   }
 ];
 
