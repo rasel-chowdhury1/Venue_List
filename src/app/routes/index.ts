@@ -6,6 +6,10 @@ import { settingsRoutes } from "../modules/setting/setting.route";
 import { notificationRoutes } from "../modules/notifications/notifications.route";
 import { categoryRoutes } from "../modules/category/category.route";
 import { subscriptionRoutes } from "../modules/subscription/subscription.route";
+import path from "path";
+import { venueRoutes } from "../modules/venue/venue.route";
+import { ReviewRoutes } from "../modules/review/review.route";
+import { discoverMauritiusRoutes } from "../modules/discoverMauritius/discoverMauritius.route";
 
 const router = Router();
 
@@ -37,6 +41,18 @@ const moduleRoutes = [
   {
     path: "/subscription",
     route: subscriptionRoutes
+  },
+  {
+    path: "/venue",
+    route: venueRoutes
+  },
+  {
+    path: "/review",
+    route: ReviewRoutes
+  },
+  {
+    path: "/discover",
+    route: discoverMauritiusRoutes
   }
 ];
 

@@ -25,6 +25,7 @@ notificationRoutes
     notificationController.getMyNotifications
   )
 
+
   .patch(
     '/mark-read/:id', 
     auth('user'), 

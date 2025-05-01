@@ -14,7 +14,7 @@ import { createToken, verifyToken } from '../../utils/tokenManage';
 import { IProfile } from '../profile/profile.interface';
 import Profile from '../profile/profile.model';
 import Notification from '../notifications/notifications.model';
-import { string } from 'zod';
+import { getAdminId } from '../../DB/adminStore';
 
 export type IFilter = {
   searchTerm?: string;
@@ -213,14 +213,13 @@ const completedUser = async (id: string, payload: Partial<TUser>) => {
     });
 }
 
+  
+  
+
   const newNotification = new Notification({
     userId: user?._id, // Ensure that userId is of type mongoose.Types.ObjectId
-    receiverId: "680086940946c49769ee0a7d", // Ensure that receiverId is of type mongoose.Types.ObjectId
-    message: {
-      fullName: user.fullName || "",
-      image: user.profileImage || "", // Placeholder image URL (adjust this)
-      text: "New user added in your app"
-    },
+    receiverId: getAdminId(), // Ensure that receiverId is of type mongoose.Types.ObjectId
+    message: "New user added in your app",
     type: "added", // Use the provided type (default to "FollowRequest")
     isRead: false, // Set to false since the notification is unread initially
     timestamp: new Date(), // Timestamp of when the notification is created

@@ -22,6 +22,7 @@ const auth = (...userRoles: string[]) => {
     const { role, userId } = decodeData;
 
     const isUserExist = await User.IsUserExistById(userId);
+    
     if (!isUserExist) {
       throw new AppError(httpStatus.NOT_FOUND, 'user not found');
     }

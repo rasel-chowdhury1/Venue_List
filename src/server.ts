@@ -3,12 +3,14 @@ import mongoose from 'mongoose';
 import app from './app';
 import colors from 'colors'; // Ensure correct import
 import config from './app/config';
-import socketIO from "socket.io"
 import { initSocketIO } from './socketIo';
 import createDefaultAdmin from './app/DB/createDefaultAdmin';
+import logger from './app/helpers/logger';
+import cronJob from './app/utils/cornJob';
 
 // Create a new HTTP server
 const socketServer = createServer();
+
 
 
 let server: Server;
@@ -18,14 +20,11 @@ async function main() {
     // console.log('config.database_url', config.database_url);
     // Connect to MongoDB
     await mongoose.connect(config.database_url as string);
-    // await mongoose.connect(
-    //   'mongodb+srv://tiger:tiger@team-codecanyon.ffrshve.mongodb.net/pro-mentors?retryWrites=true&w=majority&appName=Team-CodeCanyon',
-    // );
 
     createDefaultAdmin()
     // Start Express server
     // server = app.listen(Number(config.port), config.ip as string, () => {
-
+    cronJob()
     // Start HTTP server
     server = createServer(app);
 
@@ -40,9 +39,18 @@ async function main() {
 
      
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error('Error starting the server:', err);
     console.log(err);
+
+    logger.error({
+      message: err?.message,
+      status: err?.status || 500,
+      method: "server-start",
+      url: "server-start",
+      stack: err?.stack,
+    });
+    process.exit(1);
   }
 }
 

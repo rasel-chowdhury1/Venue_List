@@ -20,6 +20,7 @@ export interface TUserCreate {
     coordinates: [number, number]; // [longitude, latitude]
   };
   venueCreated: boolean; // Indicates if the user has created a venue
+  isSubcription: 'none' | 'active' | 'expired';
   termsAndConditions: boolean;
 }
 

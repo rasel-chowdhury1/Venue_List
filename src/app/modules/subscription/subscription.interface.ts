@@ -8,6 +8,7 @@ export interface ISubscription {
   name: string;
   price: number;
   duration: number;
-  features?: string[],
+  type: string;
+  features?: string[];
   isDeleted?: boolean
 }

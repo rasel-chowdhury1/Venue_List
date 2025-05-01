@@ -12,9 +12,9 @@ import notFound from './app/middleware/notfound';
 import serverHomePage from './app/helpers/serverHomePage';
 const app: Application = express();
 app.use(express.static('public'));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.urlencoded({  extended: true }));
 //parsers
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
@@ -35,6 +35,11 @@ app.get('/', async (req: Request, res: Response) => {
   const htmlContent = await serverHomePage(); // Wait for HTML generation
   res.send(htmlContent); // Send the generated HTML
 });
+
+app.get('/error', async (req: Request, res: Response) => {
+  throw new Error("This is a forced error");
+});
+
 
 app.use(globalErrorHandler);
 

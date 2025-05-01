@@ -43,7 +43,7 @@ const venueSchema = new Schema<IVenue>({
   photos: [
     { type: String }
    ], // store URLs of uploaded photos
-  videos: [
+  video: [
     { type: String }
    ], // store URLs of uploaded videos
   adminVerified: { 
@@ -68,6 +68,9 @@ const venueSchema = new Schema<IVenue>({
     default: false
   }
 }, { timestamps: true });
+
+// Create an index on the `category` field for optimized searching and sorting
+venueSchema.index({ category: 1 }); // 1 for ascending order (or -1 for descending)
 
 const Venue = model<IVenue>('Venue', venueSchema);
 

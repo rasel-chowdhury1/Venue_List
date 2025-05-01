@@ -56,9 +56,13 @@ const getCategoryById = catchAsync(async (req: Request, res: Response) => {
 
 const updateCategory = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+
+  console.log("file data --->>> ", req.file)
   if (req?.file) {
     req.body.image = storeFile('category', req?.file?.filename);
   }
+
+  console.log("update category -->>> ", req.body);
   const updatedCategory = await categoryService.updateCategory(id, req.body);
 
   sendResponse(res, {

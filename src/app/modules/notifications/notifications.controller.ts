@@ -64,6 +64,8 @@ const markAllAsRead = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+
 const deleteNotification = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await notificationService.deleteNotification(id);

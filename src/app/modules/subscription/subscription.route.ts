@@ -29,6 +29,6 @@ subscriptionRoutes.post(
 // get all subscription by admin
 .get(
   '/',
-  auth('user'),
+  auth('user','admin'),
   subscriptionController.getAllSubscription,
 );

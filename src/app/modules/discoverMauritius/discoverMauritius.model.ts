@@ -21,13 +21,17 @@ const DiscoverMauritiusSchema = new Schema<IDiscoverMauritius>(
         type: String,
         required: true,
       },
-      duration: {
+      websiteUrl: {
         type: String,
         required: true,
       },
+      duration: {
+        type: String,
+        default: "10 min"
+      },
       isDeleted: {
         type: Boolean,
-        required: true
+        required: false
       }
     },
     {

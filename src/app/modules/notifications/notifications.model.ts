@@ -14,18 +14,17 @@ const NotificationSchema = new Schema<INotification>(
       ref: 'User', // Reference to the User model
       required: true,
     },
+    title: {
+      type: String,
+      default: ""
+    },
     message: {
-      type: {
-        fullName: {type: String, default: false},
-        image: { type: String, default: "" }, // Store the image URL or path
-        text: { type: String, required: true },  // Store additional data
-        photos: { type: [String], default: [] }, // Optional array of photo URLs or paths
-      },
+      type: String,
       required: true, // The message object itself is required
     },
     type: {
       type: String,
-      enum: ["interested", "notInterested","SendFollow", "AcceptFollow", "DeclineFollow", "Accepted", "Rejected", "added"],
+      enum: [ "added", "request", 'recoveryUser', 'recoveryVenue', 'subscription', 'info' ],
       required: true,
     },
     isRead: {

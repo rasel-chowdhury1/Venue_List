@@ -1,6 +1,7 @@
 import config from '../config';
 import { USER_ROLE } from '../modules/user/user.constants';
 import { User } from '../modules/user/user.models';
+import { setAdminData } from './adminStore';
 
 
 const AdminUser = {
@@ -15,10 +16,13 @@ const AdminUser = {
 
 const createDefaultAdmin = async () => {
   //when database is connected, we will check is there any user who is super admin
-  const isseedAdminExits = await User.findOne({ role: USER_ROLE.ADMIN });
+  const existingAdmin = await User.findOne({ role: USER_ROLE.ADMIN });
 
-  if (!isseedAdminExits) {
-    await User.create(AdminUser);
+  if (!existingAdmin) {
+    const result = await User.create(AdminUser);
+    setAdminData(result); // store to memory
+  } else {
+    setAdminData(existingAdmin); // store to memory
   }
 };
 

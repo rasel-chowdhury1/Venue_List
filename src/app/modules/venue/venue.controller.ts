@@ -4,11 +4,15 @@ import sendResponse from "../../utils/sendResponse";
 import { VenueService } from "./venue.service";
 import httpStatus from "http-status"; // Assuming http-status is imported
 import { storeFiles } from "../../utils/fileHelper";
+import path from "path";
+import { getVideoDuration } from "./venue.utils";
+import AppError from "../../error/AppError";
 
 const createVenue = catchAsync(async (req: Request, res: Response) => {
-
-    const {userId} = req.user;
+    const {userId,email} = req.user;
     req.body.userId = userId;
+    req.body.email = email;
+    console.log("req files -->>>> ", req.files)
       // Check if there are uploaded files
     if (req.files) {
         try {
@@ -24,8 +28,10 @@ const createVenue = catchAsync(async (req: Request, res: Response) => {
         }
 
         // Set image (single file)
-        if (filePaths.videos && filePaths.videos.length > 0) {
-            req.body.videos = filePaths.videos; // Assign first image
+        if (filePaths.video && filePaths.video.length > 0) {
+            const videoFile = filePaths.video[0];
+            req.body.video = videoFile; // Assign first image
+
         }
 
 
@@ -39,7 +45,7 @@ const createVenue = catchAsync(async (req: Request, res: Response) => {
         });
         }
     }
-    const result = await VenueService.createVenue(req.body);
+    const result = await VenueService.createVenue(req.body)
     sendResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,
@@ -72,6 +78,47 @@ const getSpecificVenue = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getSpecificCategoryVenues = catchAsync(async (req: Request, res: Response) => {
+    const {categoryName} = req.params;
+
+
+    const venues = await VenueService.getSpecificCategoryVenues(categoryName, req.query);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Specific category venues fetched successfully.",
+        data: venues,
+    });
+});
+
+const getPendingVenues = catchAsync(async (req: Request, res: Response) => {
+    const venue = await VenueService.getPendingVenues();
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Pending venue fetched successfully.",
+        data: venue,
+    });
+});
+
+
+
+
+
+const getPopularVenues = catchAsync(async (req: Request, res: Response) => {
+    const venues = await VenueService.getPopularVenue(); // Get all venues (No need for venueId here)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Popular venues fetched successfully.",
+        data: venues,
+    });
+});
+
+
 const getAllVenues = catchAsync(async (req: Request, res: Response) => {
     const venues = await VenueService.getAllVenues(); // Get all venues (No need for venueId here)
 
@@ -84,8 +131,9 @@ const getAllVenues = catchAsync(async (req: Request, res: Response) => {
 });
 
 const acceptedVenueByAdmin = catchAsync(async (req: Request, res: Response) => {
+    const {userId} = req.user;
     const { venueId } = req.params; // Fetch venueId from URL params
-    const deletedVenue = await VenueService.acceptedVenueByAdmin(venueId);
+    const deletedVenue = await VenueService.acceptedVenueByAdmin(userId,venueId);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -124,6 +172,9 @@ export const venueController = {
     createVenue,
     updateVenue,
     getSpecificVenue,
+    getPendingVenues,
+    getPopularVenues,
+    getSpecificCategoryVenues,
     getAllVenues,
     deleteSpecificVenue,
     acceptedVenueByAdmin,

@@ -1,5 +1,35 @@
 import ffmpeg from 'fluent-ffmpeg';
 import path from 'path';
+import AppError from '../../error/AppError';
+import httpStatus from "http-status"; 
+import catchAsync from '../../utils/catchAsync';
+import Venue from './venue.model';
+import sendResponse from '../../utils/sendResponse';
+
+// Set ffmpeg and ffprobe binaries if they're not in the default system PATH
+ffmpeg.setFfmpegPath(path.resolve('C:/ffmpeg/bin/ffmpeg.exe'));  // Path to ffmpeg
+ffmpeg.setFfprobePath(path.resolve('C:/ffmpeg/bin/ffprobe.exe'));  // Path to ffprobe
+
+export const checkIfVenueAlreadyExists = () => {
+  return catchAsync(async (req, res, next) => {
+    const { userId } = req.user;  // Destructure userId from the authenticated user's data
+
+    // Check if the user has already created a venue
+    const existingVenue = await Venue.findOne({ userId });
+
+    if (existingVenue) {
+      // If the venue exists, return a conflict error with a descriptive message
+      sendResponse(res, {
+        statusCode: httpStatus.CONFLICT,
+        success: false,
+        message: "A venue has already been created by this user.",
+        data: null,
+      });
+    }
+
+    next();  // Proceed to the next middleware if no venue exists
+  });
+};
 
 export function calculateCompletionPercentage(venue: any): number {
     // Define the required fields
@@ -37,18 +67,21 @@ export function calculateCompletionPercentage(venue: any): number {
     return completionPercentage;
   }
 
-  // Function to get video duration
-export const getVideoDuration = (videoPath: string): Promise<string> => {
+
+//getVideoDuration
+export const getVideoDuration = (filePath: string): Promise<number | undefined> => {
+  console.log("path -->>> ", filePath)
   return new Promise((resolve, reject) => {
-    ffmpeg.ffprobe(videoPath, (err, metadata) => {
+    const normalizedPath = path.resolve(filePath).replace(/\\/g, '/');
+    console.log('FFmpeg Path:', normalizedPath); // Log the final path used
+ 
+    ffmpeg.ffprobe(normalizedPath, (err, metadata) => {
       if (err) {
-        return reject('Error getting video duration');
+        //console.error('FFmpeg Error:', err.message);
+        throw new AppError(httpStatus.NOT_FOUND, 'FFmpeg Error');
       }
-      const duration = metadata.format.duration as number; // In seconds
-      const minutes = Math.floor(duration / 60);
-      const seconds = Math.floor(duration % 60);
-      const durationString = `${minutes} min ${seconds} sec`; // Convert to readable format
-      resolve(durationString);
+      const duration = metadata.format.duration; // Duration in seconds
+      resolve(duration);
     });
   });
 };

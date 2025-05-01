@@ -20,6 +20,10 @@ const subcriptionSchema: Schema = new Schema<ISubscription>(
             type: Number, // in month
             required: true,
         },
+        type: {
+            type: String,
+            enum: ['basic', 'advance', 'premium', 'notification', 'recommended']
+        },
         features: {type: [String], default: []},
         isDeleted: {type: Boolean, default:false}
     },

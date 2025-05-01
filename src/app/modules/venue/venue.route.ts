@@ -3,6 +3,7 @@ import auth from '../../middleware/auth';
 import { venueController } from './venue.controller';
 import parseData from '../../middleware/parseData';
 import fileUpload from '../../middleware/fileUpload';
+import { checkIfVenueAlreadyExists } from './venue.utils';
 const upload = fileUpload('./public/uploads/venue');
 
 export const venueRoutes = Router();
@@ -11,9 +12,10 @@ export const venueRoutes = Router();
 venueRoutes.post(
   '/create',
   auth('user', 'admin'),
+  checkIfVenueAlreadyExists(),
   upload.fields([
         { name: 'photos', maxCount: 10 },
-        { name: 'videos', maxCount: 1 }
+        { name: 'video', maxCount: 1 }
     ]),
   parseData(),
   venueController.createVenue,
@@ -50,4 +52,20 @@ venueRoutes.post(
   '/',
   // auth('user'),
   venueController.getAllVenues,
-);
+)
+
+.get(
+  '/popular',
+  // auth('user'),
+  venueController.getPopularVenues
+)
+
+.get(
+  "/category/:categoryName",
+  venueController.getSpecificCategoryVenues
+)
+
+.get(
+  "/:venueId",
+  venueController.getSpecificVenue
+)

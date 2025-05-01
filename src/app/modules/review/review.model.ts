@@ -1,7 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { IReview } from './review.interface';
 
-
 const ReviewSchema = new Schema<IReview>(
   {
     venueId: {
@@ -25,7 +24,7 @@ const ReviewSchema = new Schema<IReview>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Review = model<IReview>('Review', ReviewSchema);

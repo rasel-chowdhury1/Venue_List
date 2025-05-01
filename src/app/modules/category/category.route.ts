@@ -19,7 +19,6 @@ categoryRoutes
 
   .get(
     '/', 
-    
     categoryController.getAllCategories
   )  // Get all categories
 
@@ -37,9 +36,9 @@ categoryRoutes
 
   .patch(
     '/:id', 
-    auth('admin'),
+    auth('admin'), 
     upload.single('image'),
-    parseData(), 
+    parseData(),
     categoryController.updateCategory
   )  // Update category
 

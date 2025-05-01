@@ -54,6 +54,11 @@ const userSchema = new Schema<TUser>(
       type: Boolean,
       default: false,
     },
+    isSubcription: {
+       type: String,
+       enum: ['none', 'active', 'expired'],
+       default: 'none'
+    },
     isBlocked: {
       type: Boolean,
       default: false,
