@@ -40,6 +40,17 @@ const venueSchema = new Schema<IVenue>({
      type: String, 
      required: true 
     },
+  location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: [0, 0],
+      },
+    },
   photos: [
     { type: String }
    ], // store URLs of uploaded photos
@@ -69,8 +80,13 @@ const venueSchema = new Schema<IVenue>({
   }
 }, { timestamps: true });
 
+// ✅ Ensure MongoDB applies the 2dsphere index
+venueSchema.index({ location: '2dsphere' });
+
 // Create an index on the `category` field for optimized searching and sorting
 venueSchema.index({ category: 1 }); // 1 for ascending order (or -1 for descending)
+
+
 
 const Venue = model<IVenue>('Venue', venueSchema);
 

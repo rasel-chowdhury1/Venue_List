@@ -7,20 +7,32 @@ import { IVenue } from "./venue.interface";
 import Venue from "./venue.model";
 import httpStatus from "http-status";
 import Review from "../review/review.model";
+import { getAdminId } from "../../DB/adminStore";
 
 // Create a new venue
 const createVenue = async (data: Partial<IVenue>) => {
-  const venue = await Venue.create(data); // Create the venue in the database
+  const {longitude,latitude, ...rest} = data;
+
+    if (longitude !== undefined && latitude !== undefined) {
+    console.log("lang-lattitude ==>>> ", longitude,latitude)
+    rest.location = {
+      type: 'Point',
+      coordinates: [parseFloat(longitude), parseFloat(latitude)],
+    };
+    console.log("rest date 2 -->>>>>>>>> ", rest)
+  }
+
+  const venue = await Venue.create(rest); // Create the venue in the database
   if (!venue) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Venue creation failed');
   }
 
-  const adminUser = await User.findOne({role: "admin"})
+  const adminUserId = getAdminId();
 
-  if(adminUser && data.userId){
+  if(adminUserId && data.userId){
     const notificationData = {
       userId: data.userId,
-      receiverId: adminUser?._id,
+      receiverId: adminUserId,
       userMsg: "New venue is added",
       type: "request",
     } as any;
