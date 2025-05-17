@@ -74,6 +74,10 @@ const venueSchema = new Schema<IVenue>({
     type: Date, 
     default: null 
   }, // Tracks the date when the venue is deleted by the admin
+  isBlocked: {
+      type: Boolean,
+      default: false,
+    },
   isDeleted: {
     type: Boolean, 
     default: false

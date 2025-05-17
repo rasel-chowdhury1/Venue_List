@@ -47,9 +47,9 @@ userRoutes
     ),
     userController.getAdminProfile,
   )
-  .get('/all-users', auth("admin"), userController.getAllUsers)
+  .get('/all', auth("admin"), userController.getAllUsers)
   
-  .get("/all-users-overview", auth("admin"), userController.getAllUsersOverview)
+  .get("/all-overview", auth("admin"), userController.getAllUsersAndVenuesOverview)
 
 
 
@@ -74,6 +74,12 @@ userRoutes
     '/block/:id',
     auth('admin'),
     userController.blockedUser,
+  )
+
+  .patch(
+    '/unblock/:id',
+    auth('admin'),
+    userController.unBlockedUser,
   )
   
   .delete(

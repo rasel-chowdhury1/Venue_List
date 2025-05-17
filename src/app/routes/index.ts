@@ -10,6 +10,7 @@ import path from "path";
 import { venueRoutes } from "../modules/venue/venue.route";
 import { ReviewRoutes } from "../modules/review/review.route";
 import { discoverMauritiusRoutes } from "../modules/discoverMauritius/discoverMauritius.route";
+import { recoveryRequestRoutes } from "../modules/recoveryRequest/recoveryRequest.route";
 
 const router = Router();
 
@@ -53,6 +54,10 @@ const moduleRoutes = [
   {
     path: "/discover",
     route: discoverMauritiusRoutes
+  },
+  {
+    path: "/recovery",
+    route: recoveryRequestRoutes
   }
 ];
 

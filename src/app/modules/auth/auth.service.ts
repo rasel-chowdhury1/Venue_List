@@ -31,6 +31,9 @@ const login = async (payload: TLogin) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Password does not match');
   }
 
+   // ✅ Update lastLoginAt
+  await User.findByIdAndUpdate(user._id, { lastLoginAt: new Date() });
+
   const jwtPayload: {
     userId: string;
     role: string;
@@ -45,15 +48,12 @@ const login = async (payload: TLogin) => {
     role: user?.role,
   };
 
-  console.log({ jwtPayload });
 
   const accessToken = createToken({
     payload: jwtPayload,
     access_secret: config.jwt_access_secret as string,
     expity_time: config.jwt_access_expires_in as string,
   });
-
-  console.log({ accessToken });
 
   const refreshToken = createToken({
     payload: jwtPayload,

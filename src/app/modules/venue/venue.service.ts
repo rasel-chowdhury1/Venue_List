@@ -9,36 +9,82 @@ import httpStatus from "http-status";
 import Review from "../review/review.model";
 import { getAdminId } from "../../DB/adminStore";
 
-// Create a new venue
-const createVenue = async (data: Partial<IVenue>) => {
-  const {longitude,latitude, ...rest} = data;
+// // Create a new venue
+// const createVenue = async (data: Partial<IVenue>) => {
+//   const {longitude,latitude, ...rest} = data;
 
-    if (longitude !== undefined && latitude !== undefined) {
-    console.log("lang-lattitude ==>>> ", longitude,latitude)
-    rest.location = {
+//     if (longitude !== undefined && latitude !== undefined) {
+//     console.log("lang-lattitude ==>>> ", longitude,latitude)
+//     rest.location = {
+//       type: 'Point',
+//       coordinates: [parseFloat(longitude), parseFloat(latitude)],
+//     };
+//     console.log("rest date 2 -->>>>>>>>> ", rest)
+//   }
+
+//   const venue = await Venue.create(rest); // Create the venue in the database
+//   if (!venue) {
+//     throw new AppError(httpStatus.BAD_REQUEST, 'Venue creation failed');
+//   }
+
+//           await User.findOneAndUpdate(data.userId, {venueCreated: true})
+
+//   const adminUserId = getAdminId();
+
+//   if(adminUserId && data.userId){
+//     const notificationData = {
+//       userId: data.userId,
+//       receiverId: adminUserId,
+//       userMsg: "New venue is added",
+//       type: "request",
+//     } as any;
+//     await emitNotification(notificationData)
+//   }
+  
+//   return venue;
+// };
+const createVenue = async (data: Partial<IVenue>) => {
+  const { longitude, latitude, ...restData } = data;
+
+  // Build location if coordinates are provided
+  if (longitude !== undefined && latitude !== undefined) {
+    const lng = parseFloat(String(longitude));
+    const lat = parseFloat(String(latitude));
+
+    if (isNaN(lng) || isNaN(lat)) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Invalid longitude or latitude');
+    }
+
+    restData.location = {
       type: 'Point',
-      coordinates: [parseFloat(longitude), parseFloat(latitude)],
+      coordinates: [lng, lat],
     };
-    console.log("rest date 2 -->>>>>>>>> ", rest)
   }
 
-  const venue = await Venue.create(rest); // Create the venue in the database
+  // Create the venue
+  const venue = await Venue.create(restData);
   if (!venue) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Venue creation failed');
   }
 
-  const adminUserId = getAdminId();
+  // Update user's venueCreated flag
+  if (data.userId) {
+    await User.findOneAndUpdate({ _id: data.userId }, { venueCreated: true });
+  }
 
-  if(adminUserId && data.userId){
+  // Notify admin
+  const adminUserId = getAdminId();
+  if (adminUserId && data.userId) {
     const notificationData = {
       userId: data.userId,
       receiverId: adminUserId,
       userMsg: "New venue is added",
       type: "request",
-    } as any;
-    await emitNotification(notificationData)
+    } as any; 
+    
+    await emitNotification(notificationData);
   }
-  
+
   return venue;
 };
 
@@ -400,9 +446,6 @@ const getSpecificCategoryVenues = async (category: any, query: any) => {
   console.log({ meta, result });
   return { meta, result };
 };
-
-
-
 
 
 

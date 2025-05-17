@@ -22,6 +22,7 @@ export interface TUserCreate {
   venueCreated: boolean; // Indicates if the user has created a venue
   isSubcription: 'none' | 'active' | 'expired';
   termsAndConditions: boolean;
+  lastLoginAt?: Date;
 }
 
 export interface TUser extends TUserCreate {

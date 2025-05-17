@@ -11,19 +11,19 @@ RecommendedRoutes
     RecommendVideoController.createRecommentedVideo
   )
 
-  .patch(
-    "/update/:id", 
-    auth('user'), 
-    ReviewController.updateReviewById
-  )
+  // .patch(
+  //   "/update/:id", 
+  //   auth('user'), 
+  //   ReviewController.updateReviewById
+  // )
 
-  .get(
-    '/venue/:venueId', 
-    ReviewController.getReviewsForEvent
-  )
+  // .get(
+  //   '/venue/:venueId', 
+  //   ReviewController.getReviewsForEvent
+  // )
 
-  .delete(
-    '/:id',
-    auth('user'),
-    ReviewController.deleteReviewById
-  )
+  // .delete(
+  //   '/:id',
+  //   auth('user'),
+  //   ReviewController.deleteReviewById
+  // )

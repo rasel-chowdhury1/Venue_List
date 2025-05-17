@@ -15,6 +15,7 @@ import { IProfile } from '../profile/profile.interface';
 import Profile from '../profile/profile.model';
 import Notification from '../notifications/notifications.model';
 import { getAdminId } from '../../DB/adminStore';
+import Venue from '../venue/venue.model';
 
 export type IFilter = {
   searchTerm?: string;
@@ -328,6 +329,109 @@ const getUsersOverview = async (userId:string, year:any) => {
   }
 };
 
+const getUsersAndVenuesOverview = async (userId:string, year:any) => {
+  try {
+    // Fetch total user count
+    const totalUsers = await User.countDocuments();
+    const totalVenues = await Venue.countDocuments();
+
+    // Fetch user growth over time for the specified year (monthly count with month name)
+    const userOverview = await User.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(`${year}-01-01`), $lt: new Date(`${year + 1}-01-01`) }, // Filter by year
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$createdAt' }, // Group by month of the 'createdAt' date
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          count: 1,
+          monthName: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 1] }, then: "January" },
+                { case: { $eq: ["$_id", 2] }, then: "February" },
+                { case: { $eq: ["$_id", 3] }, then: "March" },
+                { case: { $eq: ["$_id", 4] }, then: "April" },
+                { case: { $eq: ["$_id", 5] }, then: "May" },
+                { case: { $eq: ["$_id", 6] }, then: "June" },
+                { case: { $eq: ["$_id", 7] }, then: "July" },
+                { case: { $eq: ["$_id", 8] }, then: "August" },
+                { case: { $eq: ["$_id", 9] }, then: "September" },
+                { case: { $eq: ["$_id", 10] }, then: "October" },
+                { case: { $eq: ["$_id", 11] }, then: "November" },
+                { case: { $eq: ["$_id", 12] }, then: "December" },
+              ],
+              default: "Unknown", // Default value in case month is not valid
+            },
+          },
+        },
+      },
+      { $sort: { _id: 1 } }, // Sort by month (ascending)
+    ]);
+
+    const venueOverview = await Venue.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(`${year}-01-01`), $lt: new Date(`${year + 1}-01-01`) }, // Filter by year
+        },
+      },
+      {
+        $group: {
+          _id: { $month: '$createdAt' }, // Group by month of the 'createdAt' date
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          count: 1,
+          monthName: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$_id", 1] }, then: "January" },
+                { case: { $eq: ["$_id", 2] }, then: "February" },
+                { case: { $eq: ["$_id", 3] }, then: "March" },
+                { case: { $eq: ["$_id", 4] }, then: "April" },
+                { case: { $eq: ["$_id", 5] }, then: "May" },
+                { case: { $eq: ["$_id", 6] }, then: "June" },
+                { case: { $eq: ["$_id", 7] }, then: "July" },
+                { case: { $eq: ["$_id", 8] }, then: "August" },
+                { case: { $eq: ["$_id", 9] }, then: "September" },
+                { case: { $eq: ["$_id", 10] }, then: "October" },
+                { case: { $eq: ["$_id", 11] }, then: "November" },
+                { case: { $eq: ["$_id", 12] }, then: "December" },
+              ],
+              default: "Unknown", // Default value in case month is not valid
+            },
+          },
+        },
+      },
+      { $sort: { _id: 1 } }, // Sort by month (ascending)
+    ]);
+
+    // Fetch recent users
+    const recentUsers = await User.find({ _id: { $ne: userId } }).sort({ createdAt: -1 }).limit(6);
+
+    return {
+      totalUsers,
+      totalVenues,
+      userOverview, // Includes month names with user counts
+      venueOverview,
+      recentUsers,
+    };
+  } catch (error) {
+    console.error('Error fetching dashboard overview:', error);
+    throw new Error('Error fetching dashboard data.');
+  }
+};
+
 
 
 const getUserById = async (id: string) => {
@@ -413,15 +517,12 @@ const blockedUser = async (id: string) => {
   if (!singleUser) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
-  
-  // let status;
 
-  // if (singleUser?.isActive) {
-  //   status = false;
-  // } else {
-  //   status = true;
-  // }
-  let status = !singleUser.isBlocked; 
+  if(singleUser.isBlocked){
+    throw new AppError(httpStatus.BAD_REQUEST, 'User already blocked');
+  }
+  
+  let status = true; 
   const user = await User.findByIdAndUpdate(
     id,
     { isBlocked: status },
@@ -435,6 +536,32 @@ const blockedUser = async (id: string) => {
   return {status, user};
 };
 
+const unBlockedUser = async (id: string) => {
+  const singleUser = await User.IsUserExistById(id);
+
+  if (!singleUser) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  
+  if(!singleUser.isBlocked){
+    throw new AppError(httpStatus.BAD_REQUEST, 'User already unblocked');
+  }
+  
+  let status = false; 
+  const user = await User.findByIdAndUpdate(
+    id,
+    { isBlocked: status },
+    { new: true },
+  );
+
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'user unblock failed');
+  }
+
+  return {status, user};
+};
+
+
 export const userService = {
   createUserToken,
   otpVerifyAndCreateUser,
@@ -446,7 +573,9 @@ export const userService = {
   updateUser,
   deleteMyAccount,
   blockedUser,
+  unBlockedUser,
   getAllUserQuery,
   getAllUserCount,
-  getUsersOverview
+  getUsersOverview,
+  getUsersAndVenuesOverview
 };

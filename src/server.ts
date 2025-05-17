@@ -21,7 +21,7 @@ async function main() {
     // Connect to MongoDB
     await mongoose.connect(config.database_url as string);
 
-    // createDefaultAdmin()
+    createDefaultAdmin()
     // Start Express server
     // server = app.listen(Number(config.port), config.ip as string, () => {
     cronJob()

@@ -142,6 +142,31 @@ const getAllUsersOverview = catchAsync(async (req, res) => {
   });
 });
 
+const getAllUsersAndVenuesOverview = catchAsync(async (req, res) => {
+  console.log("get all user overviewo _>>>> ");
+  const {userId} = req.user;
+  // Default to the current year if the 'year' query parameter is not provided
+  const year = req.query.year ? parseInt(req.query.year as string) : new Date().getFullYear();
+  
+  // Ensure the year is valid
+  if (isNaN(year)) {
+    sendResponse(res, {
+      statusCode: httpStatus.BAD_REQUEST,
+      success: false,
+      message: 'Invalid year parameter.',
+      data: null,
+    });
+  }
+
+  const result = await userService.getUsersAndVenuesOverview(userId, year)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'get all Users ans Venues overview fetched successfully',
+    data: result,
+  });
+});
+
 
 
 const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
@@ -167,7 +192,17 @@ const blockedUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: `User ${result.status ? 'blocked': 'unBlocked'} successfully`,
+    message: `User blocked successfully`,
+    data: result.user,
+  });
+});
+
+const unBlockedUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await userService.unBlockedUser(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `User unblocked successfully`,
     data: result.user,
   });
 });
@@ -191,7 +226,9 @@ export const userController = {
   getAdminProfile,
   updateMyProfile,
   blockedUser,
+  unBlockedUser,
   deleteMyAccount,
   getAllUsers,
-  getAllUsersOverview
+  getAllUsersOverview,
+  getAllUsersAndVenuesOverview
 };

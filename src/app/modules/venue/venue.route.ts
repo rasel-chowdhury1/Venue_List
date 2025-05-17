@@ -55,6 +55,13 @@ venueRoutes.post(
 )
 
 .get(
+  "/pending",
+  auth("admin"),
+  venueController.getPendingVenues
+)
+
+
+.get(
   '/popular',
   // auth('user'),
   venueController.getPopularVenues

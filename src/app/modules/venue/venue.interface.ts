@@ -22,6 +22,7 @@ export interface IVenue extends Document {
     status?: string;
     acceptedAt?: string;
     deletedAt?: Date;
+    isBlocked: boolean;
     isDeleted: boolean;
     duration?: string
   }

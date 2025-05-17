@@ -46,6 +46,8 @@ const createVenue = catchAsync(async (req: Request, res: Response) => {
         }
     }
     const result = await VenueService.createVenue(req.body)
+
+    
     sendResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,
@@ -102,9 +104,6 @@ const getPendingVenues = catchAsync(async (req: Request, res: Response) => {
         data: venue,
     });
 });
-
-
-
 
 
 const getPopularVenues = catchAsync(async (req: Request, res: Response) => {

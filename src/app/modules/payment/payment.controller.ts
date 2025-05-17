@@ -3,7 +3,6 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import { PaymentService } from './payment.service';
 import sendResponse from '../../utils/sendResponse';
-import { createTestAccount } from 'nodemailer';
 
 // Get all payments with optional filtering
 export const getAllPayments = catchAsync(async (req: Request, res: Response): Promise<void> => {

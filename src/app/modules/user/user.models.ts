@@ -59,6 +59,10 @@ const userSchema = new Schema<TUser>(
        enum: ['none', 'active', 'expired'],
        default: 'none'
     },
+    lastLoginAt: {
+  type: Date,
+  default: null,
+},
     isBlocked: {
       type: Boolean,
       default: false,
