@@ -94,6 +94,16 @@ const getUserById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getSpecificVenueCreatedStatus = catchAsync(async (req: Request, res: Response) => {
+  const result = await userService.getSpecificVenueCreatedStatus(req.user.userId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Specific venue created status fetched successfully',
+    data: result,
+  });
+});
+
 const getUsersWithoutCreatedVenue = catchAsync(async (req, res) => {
   const result = await userService.getUsersWithoutCreatedVenue(req.query);
 
@@ -273,5 +283,6 @@ export const userController = {
   getAllUsers,
   getAllUsersOverview,
   getAllUsersAndVenuesOverview,
-  sentContactMesssageToAdminSupport
+  sentContactMesssageToAdminSupport,
+  getSpecificVenueCreatedStatus
 };

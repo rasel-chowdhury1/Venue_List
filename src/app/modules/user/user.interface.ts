@@ -20,7 +20,7 @@ export interface TUserCreate {
     type: 'Point';
     coordinates: [number, number]; // [longitude, latitude]
   };
-  venueCreated: boolean; // Indicates if the user has 
+  venueCreated: string; // Indicates if the user has 
   venueCreatedAdmin: boolean;
   subscriptionHistory?: [];
   isSubcription: 'none' | 'active' | 'expired';

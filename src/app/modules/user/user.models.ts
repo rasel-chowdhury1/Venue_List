@@ -60,8 +60,9 @@ const userSchema = new Schema<TUser>(
       },
     },
     venueCreated: {
-      type: Boolean,
-      default: false,
+      type: String,
+      enum: ["none", "pending", "approved"],
+      default: "none",
     },
     venueCreatedAdmin: {
       type: Boolean,

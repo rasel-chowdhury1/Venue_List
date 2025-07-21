@@ -277,12 +277,20 @@ const getAllUserQuery = async (
 
 const getUsersWithoutCreatedVenue = async (query: Record<string, unknown>) => {
   const users = await User.find({
-    venueCreated: false,
+    venueCreated: 'none',
     role: 'user',
     isDeleted: false,
     isBlocked: false,
   });
   return users || [];
+};
+
+const getSpecificVenueCreatedStatus = async(userId: string) => {
+  const user = await User.findById(userId);
+  return {
+    venueCreated: user?.venueCreated,
+    venueCreatedAdmin: user?.venueCreatedAdmin
+  };
 };
 
 const getAllUserCount = async () => {
@@ -706,5 +714,6 @@ export const userService = {
   getAllUserCount,
   getUsersOverview,
   getUsersAndVenuesOverview,
-  sentContactMesssageToAdminSupport
+  sentContactMesssageToAdminSupport,
+  getSpecificVenueCreatedStatus
 };

@@ -60,6 +60,7 @@ const createVenue = async (data: Partial<IVenue>) => {
   }
 
   restData.category = isExistCategoryName._id;
+  
 
   // Build location if coordinates are provided
   if (longitude !== undefined && latitude !== undefined) {
@@ -267,6 +268,7 @@ const acceptedVenueByAdmin = async (userId: string, venueId: string) => {
   // Mark the venue as accepted and admin verified
   venue.adminVerified = true;
   venue.status = 'accepted';
+
   venue.acceptedAt = new Date() as any;
 
   // Add the venue's video to Discover Mauritius after acceptance

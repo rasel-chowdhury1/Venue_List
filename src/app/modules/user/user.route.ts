@@ -44,6 +44,15 @@ userRoutes
       'user', 'admin',
     ),
     userController.getMyProfile,
+)
+  
+  
+    .get(
+    '/venueCreatedStatus',
+    auth(
+      'user', 'admin',
+    ),
+    userController.getSpecificVenueCreatedStatus,
   )
 
   .get(
