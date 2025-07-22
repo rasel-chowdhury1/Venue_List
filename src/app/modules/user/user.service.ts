@@ -300,6 +300,7 @@ const getAllUserCount = async () => {
 
 const getUsersOverview = async (userId: string, year: any) => {
   try {
+    
     // Fetch total user count
     const totalUsers = await User.countDocuments();
 
