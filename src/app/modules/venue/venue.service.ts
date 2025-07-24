@@ -207,6 +207,13 @@ const updateVenueById = async (
   } = updateData;
   
 
+    if (longitude !== undefined && latitude !== undefined) {
+    rest.location = {
+      type: 'Point',
+      coordinates: [parseFloat(longitude), parseFloat(latitude)],
+    };
+  }
+
   // // Handle location update safely
   // if (longitude !== undefined && latitude !== undefined) {
   //   const lng = parseFloat(longitude as string);

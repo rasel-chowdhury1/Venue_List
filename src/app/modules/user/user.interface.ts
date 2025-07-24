@@ -26,6 +26,7 @@ export interface TUserCreate {
   isSubcription: 'none' | 'active' | 'expired';
   termsAndConditions: boolean;
   lastLoginAt?: Date;
+  isAdminCreated: boolean;
   postalCode?: string;
 }
 

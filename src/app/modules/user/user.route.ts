@@ -15,6 +15,13 @@ userRoutes
     '/create',
     validateRequest(userValidation?.userValidationSchema),
     userController.createUser,
+)
+  
+  .post(
+    '/admin/create',
+    auth("admin"),
+    validateRequest(userValidation?.adminUserValidationSchema),
+    userController.adminCreateUser,
   )
 
   .post(

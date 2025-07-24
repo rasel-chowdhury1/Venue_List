@@ -18,6 +18,7 @@ import { DeleteAccountPayload, TUser, TUserCreate } from './user.interface';
 import { User } from './user.models';
 import { sendEmail } from '../../utils/mailSender';
 import { contactUsEmailTemplate } from './user.utils';
+import { gender } from './user.constants';
 
 export type IFilter = {
   searchTerm?: string;
@@ -178,6 +179,46 @@ const otpVerifyAndCreateUser = async ({
   return accessToken;
 };
 
+const adminCreateUser = async (userData: {fullName: string,email:string,password:string,gender:string,address: string}) => {
+
+  const isExist = await User.isUserExist(userData.email as string);
+  console.log("isExist===>>> ", isExist)
+  if (isExist) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'User already exists with this email',
+    );
+  }
+
+  const newUserData = {
+    fullName: userData.fullName,
+    password: userData.password,
+    email: userData.email,
+    gender: userData.gender,
+    address: userData.address,
+    isAdminCreated: true,
+    termsAndConditions: true
+  };
+
+  const user = await User.create(newUserData);
+
+  if (!user) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User creation failed');
+  }
+
+  // Create user profile
+  const profileData: IProfile = {
+    user: user._id as any,
+  };
+
+  const profile = await Profile.create(profileData);
+  if (!profile) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Profile creation failed');
+  }
+
+
+};
+
 const completedUser = async (id: string, payload: Partial<TUser>) => {
   const {
     role,
@@ -231,8 +272,8 @@ const completedUser = async (id: string, payload: Partial<TUser>) => {
 };
 
 const updateUser = async (id: string, payload: Partial<TUser>) => {
-  const { role, email, isBlocked, isDeleted, password,about, phone, city,postalAddress, postalCode, ...rest } = payload;
-  console.log({phone})
+  const { role, email, isBlocked, isDeleted, password,about, city,postalAddress, postalCode, ...rest } = payload;
+
   const user = await User.findByIdAndUpdate(id, rest, { new: true });
 
 
@@ -243,7 +284,7 @@ const updateUser = async (id: string, payload: Partial<TUser>) => {
     // Build profile update object only with defined fields
   const profileUpdates: any = {};
   if (about !== undefined) profileUpdates.about = about;
-  if (phone !== undefined) profileUpdates.phone = phone;
+  if (rest.phone !== undefined) profileUpdates.phone = rest.phone;
   if (city !== undefined) profileUpdates.city = city;
   if (postalAddress !== undefined) profileUpdates.postalAddress = postalAddress;
   if (postalCode !== undefined) profileUpdates.postalCode = postalCode;
@@ -700,6 +741,7 @@ const sentContactMesssageToAdminSupport = async(payload: {fullName: string, emai
 
 export const userService = {
   createUserToken,
+  adminCreateUser,
   otpVerifyAndCreateUser,
   completedUser,
   getMyProfile,

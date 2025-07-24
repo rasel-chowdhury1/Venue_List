@@ -20,6 +20,18 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const adminCreateUser = catchAsync(async (req: Request, res: Response) => {
+ 
+  const result = await userService.adminCreateUser(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User created successfully',
+    data: result ,
+  });
+});
+
 const userCreateVarification = catchAsync(async (req, res) => {
   console.log('..........1..........');
   const token = req.headers?.token as string;
@@ -270,6 +282,7 @@ const sentContactMesssageToAdminSupport = catchAsync(async (req: Request, res: R
 
 export const userController = {
   createUser,
+  adminCreateUser,
   userCreateVarification,
   completedProfile,
   getUsersWithoutCreatedVenue,

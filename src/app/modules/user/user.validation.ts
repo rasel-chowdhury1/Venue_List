@@ -16,6 +16,20 @@ const userValidationSchema = z.object({
     role: z.literal('user', { message: 'Role must be "user"' }),  // Only allows "user"
   }),
 });
+const adminUserValidationSchema = z.object({
+  body: z.object({
+    fullName: z
+      .string()
+      .min(1, { message: 'Full name is required' })
+      .optional(),
+    email: z.string().email({ message: 'Invalid email format' }),
+    password: z
+      .string()
+      .min(6, { message: 'Password must be at least 6 characters long' }),
+    gender: z.enum(['male', 'female', 'others'], { message: 'Gender must be one of: male, female, or others' }), 
+    address: z.string().optional()
+  }),
+});
 
 const completeUserValidationSchema = z.object({
   body: z.object({
@@ -43,5 +57,6 @@ const completeUserValidationSchema = z.object({
 
 export const userValidation = {
   userValidationSchema,
-  completeUserValidationSchema
+  completeUserValidationSchema,
+  adminUserValidationSchema
 };

@@ -95,7 +95,11 @@ const userSchema = new Schema<TUser>(
     lastLoginAt: {
   type: Date,
   default: null,
-},
+    },
+    isAdminCreated: {
+      type: Boolean,
+      default: false
+    },
     isBlocked: {
       type: Boolean,
       default: false,
