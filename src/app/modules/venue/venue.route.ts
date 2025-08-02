@@ -221,6 +221,6 @@ venueRoutes.post(
 
   .get(
     '/:venueId', 
-    auth('user', 'admin'), 
+    // auth('user', 'admin'), 
     venueController.getSpecificVenue
   )
