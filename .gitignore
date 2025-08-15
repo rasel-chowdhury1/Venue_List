@@ -68,6 +68,6 @@ venv/
 env/
 .vercel
 .vercel
-public/
+# public/
 .env
 venue.pem
