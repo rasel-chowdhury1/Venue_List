@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../error/AppError';
-import { otpSendEmail } from '../../utils/emailNotifiacation';
+import { otpSendEmail, otpSendEmailForgetPassword } from '../../utils/emailNotifiacation';
 import { createToken, verifyToken } from '../../utils/tokenManage';
 import { otpServices } from '../otp/otp.service';
 import { generateOptAndExpireTime } from '../otp/otp.utils';
@@ -77,7 +77,7 @@ const forgotPasswordByEmail = async (email: string) => {
 
   const { isExist, isExpireOtp } = await otpServices.checkOtpByEmail(email);
 
-  const { otp, expiredAt } = generateOptAndExpireTime();
+  const { otp, expiredAt } = generateOptAndExpireTime(10);
 
   if (isExist && !isExpireOtp) {
     throw new AppError(httpStatus.BAD_REQUEST, 'otp-exist. Check your email.');
@@ -112,7 +112,7 @@ const forgotPasswordByEmail = async (email: string) => {
   });
 
   process.nextTick(async () => {
-    await otpSendEmail({
+    await otpSendEmailForgetPassword({
       sentTo: email,
       subject: 'Your one time otp for forget password',
       name: '',
