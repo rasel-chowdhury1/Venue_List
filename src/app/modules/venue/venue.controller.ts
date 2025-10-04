@@ -113,11 +113,73 @@ const createVenue = catchAsync(async (req: Request, res: Response) => {
 //   });
 // });
 
+// const createVenueByAdmin = catchAsync(async (req: Request, res: Response) => {
+
+//   req.body.adminVerified = true;
+//   req.body.createdAdmin = true;
+//   req.body.status = 'accepted';
+
+
+
+
+// console.log(req.files)
+//   if (req.files) {
+//     try {
+//       console.log("req.files data ", req.files)
+//       const uploadedFiles = await uploadMultipleFilesToS3(
+//         req.files as { [fieldName: string]: Express.Multer.File[] }
+//       );
+
+//       // Assign files to req.body
+//       if (uploadedFiles.profile?.[0]) {
+//         req.body.profileImage = uploadedFiles.profile[0];
+//       }
+
+//       if (uploadedFiles.photos?.length) {
+//         req.body.photos = uploadedFiles.photos;
+//       }
+
+//       if (uploadedFiles.video?.[0]) {
+//         req.body.video = uploadedFiles.video[0];
+//       }
+
+//       if (uploadedFiles.menuPhotos?.length) {
+//         req.body.menuPhotos = uploadedFiles.menuPhotos;
+//       }
+
+//       console.log("create venue by admin -->>> ",req.body)
+//     } catch (error: any) {
+//       console.error('🔥 Error in uploadMultipleFilesToS3:', error.message);
+//       return sendResponse(res, {
+//         statusCode: httpStatus.BAD_REQUEST,
+//         success: false,
+//         message: 'File upload failed',
+//         data: null,
+//       });
+//     }
+//   }
+
+
+//     console.log(req.body)
+//   const result = await VenueService.createVenueByAdmin(req.body);
+
+//   sendResponse(res, {
+//     statusCode: httpStatus.CREATED,
+//     success: true,
+//     message: 'Venue created successfully.',
+//     data: result,
+//   });
+// });
+
+
 const createVenueByAdmin = catchAsync(async (req: Request, res: Response) => {
+
+  const {userId} = req.user;
+  
   req.body.adminVerified = true;
   req.body.createdAdmin = true;
   req.body.status = 'accepted';
-
+  req.body.userId = userId;
 
 
 
@@ -169,6 +231,7 @@ console.log(req.files)
     data: result,
   });
 });
+
 
 const addVisitorRecord = catchAsync(async (req: Request, res: Response) => {
   const { venueId } = req.params;

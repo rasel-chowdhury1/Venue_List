@@ -123,19 +123,19 @@ const createVenueByAdmin = async (data: Partial<IVenue>) => {
     await createDiscoverMauritiusVideo(venue);
   }
 
-  const adminUserId = getAdminId();
+  // const adminUserId = getAdminId();
 
-  await User.findByIdAndUpdate(
-    venue.userId,
-    { venueCreated: true, venueCreatedAdmin: true },
-    { new: true },
-  );
+  // await User.findByIdAndUpdate(
+  //   venue.userId,
+  //   { venueCreated: true, venueCreatedAdmin: true },
+  //   { new: true },
+  // );
 
-  await notifyUsersAboutVenueAcceptance(
-    adminUserId,
-    { userId: venue.userId, name: venue.name },
-    'Admin created your venue ',
-  );
+  // await notifyUsersAboutVenueAcceptance(
+  //   adminUserId,
+  //   { userId: venue.userId, name: venue.name },
+  //   'Admin created your venue ',
+  // );
 
   return venue;
 };

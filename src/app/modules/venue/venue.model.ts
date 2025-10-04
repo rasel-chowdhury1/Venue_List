@@ -7,7 +7,7 @@ const venueSchema = new Schema<IVenue>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      unique: true, // Ensures that a user can only have one venue
+      // unique: true, // Ensures that a user can only have one venue
     },
     email: {
       type: String,
@@ -23,7 +23,7 @@ const venueSchema = new Schema<IVenue>(
     },
     phone: {
       type: String,
-      required: true,
+      default: ""
     },
     category: {
       type: Schema.Types.ObjectId,
