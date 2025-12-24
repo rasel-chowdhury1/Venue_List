@@ -43,7 +43,7 @@ const completeUserValidationSchema = z.object({
       .refine((val) => !val || !isNaN(Date.parse(val)), { message: "Invalid date format" })  // Check if it's a valid date or undefined
       .optional()
       .transform((val) => (val ? new Date(val) : undefined)),  // Convert string to Date if provided, otherwise leave as undefined
-    gender: z.enum(['male', 'female', 'others'], { message: 'Gender must be one of: male, female, or others' }),  // Corrected to z.enum()
+    gender: z.enum(['male', 'female', 'others'], { message: 'Gender must be one of: male, female, or others' }).optional(),  // Corrected to z.enum()
     phone: z
       .string()
       .min(10, { message: 'Phone number must be at least 10 digits' })

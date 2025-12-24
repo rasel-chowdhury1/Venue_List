@@ -105,6 +105,8 @@ const createVenue = async (data: Partial<IVenue>) => {
 const createVenueByAdmin = async (data: Partial<IVenue>) => {
   const { longitude, latitude, ...rest } = data;
 
+  
+
   if (longitude !== undefined && latitude !== undefined) {
     rest.location = {
       type: 'Point',

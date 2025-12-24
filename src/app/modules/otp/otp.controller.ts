@@ -7,6 +7,8 @@ import { otpServices } from './otp.service';
 const resendOtp = catchAsync(async (req: Request, res: Response) => {
   const token = req.headers?.token as string;
 
+
+
   console.log({ token });
 
   await otpServices.resendOtpEmail({ token });
@@ -17,6 +19,7 @@ const resendOtp = catchAsync(async (req: Request, res: Response) => {
     message: 'OTP Resent successfully',
     data: {},
   });
+  
 });
 
 export const otpControllers = {

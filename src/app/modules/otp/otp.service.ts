@@ -34,18 +34,14 @@ const checkOtpByEmail = async (email: string) => {
     sentTo: email,
   });
 
-  console.log({ email });
 
-  console.log({ isExist });
 
   const isExpireOtp = await Otp.findOne({
     sentTo: email,
     expiredAt: { $lt: new Date() }, // Use the `$gt` operator for comparison
   });
 
-  console.log({ isExpireOtp });
 
-  console.log('.........');
 
   return { isExist, isExpireOtp };
 };
@@ -109,11 +105,16 @@ const resendOtpEmail = async ({ token }: { token: string }) => {
     token,
     access_secret: config.jwt_access_secret as string,
   });
+
+  console.log({ decodeData });
+
   const { email } = decodeData;
 
   const { isExist, isExpireOtp } = await checkOtpByEmail(email);
 
   const { otp, expiredAt } = generateOptAndExpireTime();
+
+
 
   if (!isExist) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Token data is not valid !!');
