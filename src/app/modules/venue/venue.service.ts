@@ -116,6 +116,10 @@ const createVenueByAdmin = async (data: Partial<IVenue>) => {
 
   rest.generateQR = true;
 
+  if(rest.postalAddress){
+    rest.cityTown = rest.postalAddress;
+  }
+
   const venue = await Venue.create(rest); // Create the venue in the database
 
   if (!venue) {
