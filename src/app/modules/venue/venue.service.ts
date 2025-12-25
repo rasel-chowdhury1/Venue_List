@@ -59,7 +59,7 @@ const createVenue = async (data: Partial<IVenue>) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Category not found');
   }
 
-  restData.category = isExistCategoryName._id;
+  (restData as any).category = isExistCategoryName._id;
   
 
   // Build location if coordinates are provided
@@ -113,6 +113,8 @@ const createVenueByAdmin = async (data: Partial<IVenue>) => {
       coordinates: [parseFloat(longitude), parseFloat(latitude)],
     };
   }
+
+  rest.generateQR = true;
 
   const venue = await Venue.create(rest); // Create the venue in the database
 
@@ -612,12 +614,12 @@ const getSpecificCategoryVenues = async (categoryId: any, query: any) => {
 
   // Convert string to ObjectId
   const categoryObjectId = new Types.ObjectId(categoryId);
-  console.log({ categoryObjectId });
   // Step 1: Build initial match condition
   const matchConditions: any = {
     category: categoryObjectId,
     status: 'accepted',
     isDeleted: false,
+    isBlocked: false
   };
 
   // Step 2: Add search if searchTerm is provided
@@ -741,6 +743,7 @@ const getSpecificCategoryVenues = async (categoryId: any, query: any) => {
     category: categoryId,
     status: 'accepted',
     isDeleted: false,
+    isBlocked: false
   };
 
   if (query?.searchTerm) {
@@ -776,6 +779,7 @@ const getShoppingCategoryVenues = async (categoryId: any, query: any) => {
     category: categoryObjectId,
     status: 'accepted',
     isDeleted: false,
+    isBlocked: false
   };
 
   if(subcategory){
@@ -801,6 +805,7 @@ const getPopularVenue = async () => {
       $match: {
         status: 'accepted',
         isDeleted: false,
+        isBlocked: false
       },
     },
     // Lookup reviews for the venues
@@ -850,7 +855,7 @@ const getPopularVenue = async () => {
 
 // Get all venues
 const getAllVenues = async () => {
-  const venues = await Venue.find(); // Get all venues from the database
+  const venues = await Venue.find({isDeleted: false}).sort({ createdAt: -1 }); // Get all venues from the database
   
   if (venues.length === 0) {
     throw new AppError(httpStatus.NOT_FOUND, 'No venues found');
@@ -860,7 +865,7 @@ const getAllVenues = async () => {
 
 // Get all venues
 const getAllVenuess = async (query: any) => {
-  const venueQuery = new QueryBuilder(Venue.find({adminVerified: true}), query)
+  const venueQuery = new QueryBuilder(Venue.find({adminVerified: true, isDeleted: false, isBlocked: false}), query)
     .search(['name', 'location']) // example searchable fields
     .filter()                     // applies query filtering
     .sort('createdAt')            // sort by createdAt
@@ -955,7 +960,7 @@ const getSpecificVenueMonthlySummaryWithDemographics = async (userId: string) =>
     VenueVisitor.aggregate([
       {
         $match: {
-          venueId: new mongoose.Types.ObjectId(venueId),
+          venueId: new mongoose.Types.ObjectId(venueId as any),
           createdAt: { $gte: startOfMonth, $lte: endOfMonth },
         },
       },
@@ -1069,15 +1074,15 @@ const getDemographicStats = async (userId: string) => {
   const percentage = (count: number) => Math.round((count / total) * 100);
 
   return {
-    ageGroups: result.ageGroups.map((g) => ({
+    ageGroups: result.ageGroups.map((g : any) => ({
       range: `${g._id}-${g._id + 4}`, // Display age range as "25-30", "31-35", etc.
       percent: percentage(g.count),
     })),
-    genderBreakdown: result.genderBreakdown.map((g) => ({
+    genderBreakdown: result.genderBreakdown.map((g: any) => ({
       gender: g._id,
       percent: percentage(g.count),
     })),
-    locationBreakdown: result.locationBreakdown.map((l) => ({
+    locationBreakdown: result.locationBreakdown.map((l: any) => ({
       location: l._id,
       percent: percentage(l.count),
     })),
@@ -1087,7 +1092,7 @@ const getDemographicStats = async (userId: string) => {
 
 
 
-const getSpecificVenueVisitorStats = async (userId, rangeType) => {
+const getSpecificVenueVisitorStats = async (userId: any, rangeType: any) => {
   const existingVenue = await Venue.findOne({ userId });
   if (!existingVenue) {
     throw new AppError(httpStatus.NOT_FOUND, 'No venues found');
@@ -1165,7 +1170,7 @@ const getSpecificVenueVisitorStats = async (userId, rangeType) => {
 
 
 
-const getSpecificBookingVisitorStats = async (userId, rangeType) => {
+const getSpecificBookingVisitorStats = async (userId: any, rangeType: any) => {
   const existingVenue = await Venue.findOne({ userId });
   if (!existingVenue) {
     throw new AppError(httpStatus.NOT_FOUND, 'No venues found');
@@ -1256,6 +1261,7 @@ const createGenerateQR = async (userId: string) => {
 };
 
 const adminGenerateQR = async (venueId: string) => {
+
   const result = await Venue.findByIdAndUpdate(
     venueId,
     { generateQR: true },

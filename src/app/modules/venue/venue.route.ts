@@ -69,11 +69,7 @@ venueRoutes.post(
     venueController.acceptedVenueByAdmin,
   )
 
-  .patch(
-    '/deleted/:venueId',
-    auth('admin'),
-    venueController.deletedVenueByAdmin,
-)
+
   // block venue by id
     .patch(
     '/blocked/:venueId',
@@ -107,12 +103,20 @@ venueRoutes.post(
     venueController.deleteSpecificVenue,
   )
 
+    
+  .delete(
+    '/deleted/:venueId',
+    auth('admin'),
+    venueController.deletedVenueByAdmin,
+ )
+
   // delete venue route by id
   .delete(
     '/:venueId/delete',
     auth('admin'),
     venueController.deleteSpecificVenue,
   )
+
 
   // get all venue by admin
   .get(
