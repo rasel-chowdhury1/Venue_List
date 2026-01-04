@@ -49,6 +49,8 @@ const createAdminRecommentedVideo = catchAsync(async (req: Request, res: Respons
     req.body.createdAdmin = true;
     req.body.status = 'accepted';
 
+
+    console.log("req files ===>>>>>   ",req.files)
     // Check if there are uploaded files
       if (req.files) {
         try {
