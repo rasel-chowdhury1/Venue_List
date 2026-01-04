@@ -61,6 +61,7 @@
 import { Request } from 'express';
 import fs from 'fs';
 import multer from 'multer';
+import path from 'path';
 
 // Create a generic file upload function that accepts a directory
 const fileUpload = (uploadDirectory: string) => {
@@ -70,11 +71,17 @@ const fileUpload = (uploadDirectory: string) => {
     fs.mkdirSync(uploadDirectory, { recursive: true });
   }
 
+  // Define & ensure video directory exists
+  const videoDirectory = path.join(process.cwd(), 'public/uploads/video');
+  if (!fs.existsSync(videoDirectory)) {
+    fs.mkdirSync(videoDirectory, { recursive: true });
+  }
+
   const storage = multer.diskStorage({
     destination: function (req: Request, file, cb) {
       // Set destination based on the provided upload directory
       if (file.fieldname === 'introVideo' || file.fieldname === 'video') {
-        cb(null, './public/uploads/video');
+        cb(null, videoDirectory);
       } else {
         cb(null, uploadDirectory);
       }
