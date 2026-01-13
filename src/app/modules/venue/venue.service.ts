@@ -767,7 +767,6 @@ const getSpecificCategoryVenues = async (categoryId: any, query: any) => {
     totalPage: Math.ceil(totalCount / (query.limit || 10)),
   };
 
-  console.log({ meta, result });
   return { meta, result };
 };
 
@@ -898,7 +897,7 @@ const getDeletedVenues = async (query: any) => {
 
 //get all location of venue
 const getAllLocationVenues = async () => {
-  const venues = await Venue.find({isDeleted: false, isBlocked: false, status: "accepted"}).select("location profileImage name postalAddress").populate("category", "name").lean(); // Get all venues from the database
+  const venues = await Venue.find({isDeleted: false, isBlocked: false, status: "accepted"}).select("location profileImage name country cityTown postalAddress").populate("category", "name").lean(); // Get all venues from the database
   if (venues.length === 0) {
     throw new AppError(httpStatus.NOT_FOUND, 'No venues found');
   }

@@ -23,7 +23,7 @@ const paymentSchema: Schema = new Schema<IPayment>(
     },
     paymentMethod: {
       type: String,
-      enum: ["Paypal","Stripe", "Card", "Bank"],
+      enum: ["Paypal", "Stripe", "Card", "Bank"],
       required: true,
     },
     subscription: {
